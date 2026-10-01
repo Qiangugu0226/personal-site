@@ -3,10 +3,8 @@
 > 我的个人主页 —— 用纯 HTML / CSS / JavaScript 手写，用来记录学习和展示自己。
 
 🔗 **在线预览**：https://qiangugu0226.github.io/personal-site/
-<!-- 【部署后记得把上面这行改成真实地址，并把注释删掉】 -->
 
 ![项目截图](screenshot.png)
-<!-- 【截图后把文件命名成 screenshot.png 放在本目录下】 -->
 
 ---
 
@@ -25,8 +23,6 @@
 - [x] 平滑滚动导航
 - [x] 学习路线时间线
 - [x] 无障碍支持（aria 属性、支持系统「减少动态效果」设置）
-- [ ] 待实现：导航滚动高亮当前区块
-- [ ] 待实现：首屏打字机效果
 
 ## 技术栈
 
@@ -64,80 +60,97 @@ personal-site/
 
 ---
 
-## 遇到的问题和解决方式
+## 关键实现说明
 
-### 一、深色模式切换后，刷新页面又变回浅色
+下面三处是代码里最需要解释的地方，也是我自己最想讲清楚的部分。
 
-**现象**：点击按钮能切换颜色，但一刷新就恢复原样。
+### 1. 深色模式怎么做到「刷新不丢」
 
-**原因**：切换只是改了 DOM 属性，没有把选择保存下来；页面重新加载时又读取了默认值。
-
-**解决**：用 `localStorage` 保存用户选择，页面加载时优先读取：
+主题状态不写在 CSS 里，而是挂在根元素的一个属性上（`js/main.js:42`）：
 
 ```js
+document.documentElement.setAttribute('data-theme', theme);
+```
+
+CSS 里所有颜色都写成 `[data-theme="dark"]` 下的覆盖值。这样切换主题只是改一个属性，不需要动任何样式代码。
+
+但属性只活在内存里，刷新就没了。所以 `applyTheme()` 在设置属性的同时把它存进 `localStorage`：
+
+```js
+// js/main.js:41-45
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem(THEME_KEY, theme);   // 关键：保存下来
+  localStorage.setItem(THEME_KEY, theme);
+  updateIcon(theme);
 }
+```
 
+下次打开时按「上次的选择 > 系统设置 > 浅色」的优先级决定用哪个：
+
+```js
+// js/main.js:52-61
 function getInitialTheme() {
   const saved = localStorage.getItem(THEME_KEY);
-  if (saved) return saved;                  // 优先用上次的选择
-  // 没有记录则跟随系统设置
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark' : 'light';
+  if (saved === 'light' || saved === 'dark') {
+    return saved;
+  }
+
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return prefersDark ? 'dark' : 'light';
 }
 ```
 
-**收获**：`localStorage` 存的是字符串，取值时要注意类型转换和空值判断。
+注意这里判断的是 `saved === 'light' || saved === 'dark'`，而不是简单的 `if (saved)`：`localStorage` 存的永远是字符串，取不到的 key 返回的是 `null` 而不是 `undefined`，所以要显式校验取值是不是合法的那两个，避免脏数据被带进页面。
 
-### 二、手机上页面会横向滚动
-
-**现象**：桌面端正常，手机上页面被撑宽，需要左右滑动。
-
-**原因**：早期给容器设了固定宽度 `width: 1080px`，屏幕比它窄时就溢出了。
-
-**解决**：改成「最大宽度 + 两侧内边距」，并给图片加自适应：
+### 2. 宽度用 max-width，而不是 width
 
 ```css
+/* css/style.css:37 */
+:root { --max-width: 1080px; }
+
+/* css/style.css:77-81 */
 .container {
-  max-width: 1080px;   /* 最大不超过这个宽度 */
-  margin: 0 auto;      /* 超出时居中 */
-  padding: 0 24px;     /* 小屏幕时留出边距 */
-}
-
-img {
-  max-width: 100%;     /* 永不溢出容器 */
-  height: auto;        /* 保持比例不变形 */
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
 }
 ```
 
-**收获**：布局应该用 `max-width` 而不是 `width`，用相对单位而不是死像素。
+`width: 1080px` 的意思是「必须正好 1080px 宽」，屏幕比它窄就只能横向滚动；`max-width` 的意思是「最多 1080px」，屏幕窄了会自动收窄。`margin: 0 auto` 负责宽屏下居中，`padding: 0 24px` 负责窄屏下和屏幕边缘留出距离。
 
-### 三、锚点跳转时标题被吸顶导航挡住
-
-**现象**：点导航跳到「技能」区块时，区块标题被顶部导航栏遮住了一截。
-
-**原因**：导航栏用了 `position: sticky` 固定在顶部，锚点滚动到目标位置时不会自动避开它。
-
-**解决**：给根元素加一行 `scroll-padding-top`：
+图片再加一条兜底规则（`css/style.css:68`）：
 
 ```css
+img { max-width: 100%; height: auto; display: block; }
+```
+
+`max-width: 100%` 保证图片永远不撑破容器，`height: auto` 保证压缩时比例不变形，`display: block` 消掉行内元素底部那条多余的空隙。这三行几乎是每个网页都要写的。
+
+### 3. 锚点跳转被吸顶导航挡住
+
+导航栏用 `position: sticky` 固定在顶部，而浏览器默认会把锚点目标滚到**视口最顶端**，结果区块标题正好被导航栏盖住一截。CSS 有一个属性就是专门解决这件事的：
+
+```css
+/* css/style.css:52-56 */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 80px;   /* 留出导航栏的高度 */
+  /* 锚点跳转时留出吸顶导航的高度，避免标题被遮住 */
+  scroll-padding-top: 80px;
 }
 ```
 
-**收获**：CSS 里有很多这类"一行解决一个具体问题"的属性，遇到问题先查有没有现成的属性，而不是急着用 JS 绕。
+`scroll-padding-top: 80px` 相当于给滚动容器顶部划出 80px 的安全区，锚点会停在这个安全区下方，正好躲开导航栏；`scroll-behavior: smooth` 让跳转变成平滑滚动而不是瞬间跳过去。
+
+这类「一个属性解决一个具体问题」的情况在 CSS 里很常见。遇到问题可以先查有没有现成的属性，而不是急着用 JavaScript 去绕。
 
 ---
 
 ## 后续计划
 
-- [ ] 加一个「项目作品」区块，用来放以后做的项目
-- [ ] 导航滚动时高亮当前所在区块
-- [ ] 补充一张截图到 README 顶部
+- [ ] 加一个「项目作品」区块，把 study-tracker 和以后的项目放进来
+- [ ] 导航滚动时高亮当前所在区块（用 IntersectionObserver 监听各个 section）
+- [ ] 首屏加一个打字机效果的自我介绍
+- [ ] 技能条滚动到可视区域时才展开
 
 ## 联系方式
 
