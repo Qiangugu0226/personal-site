@@ -2,7 +2,7 @@
 
 > 我的个人主页 —— 用纯 HTML / CSS / JavaScript 手写，用来记录学习和展示自己。
 
-🔗 **在线预览**：https://Cheguu.github.io/personal-site/
+🔗 **在线预览**：https://qiangugu0226.github.io/personal-site/
 <!-- 【部署后记得把上面这行改成真实地址，并把注释删掉】 -->
 
 ![项目截图](screenshot.png)
@@ -39,7 +39,7 @@
 ## 本地运行
 
 ```bash
-git clone https://github.com/Cheguu/personal-site.git
+git clone https://github.com/Qiangugu0226/personal-site.git
 cd personal-site
 ```
 
@@ -142,4 +142,4 @@ html {
 ## 联系方式
 
 - 邮箱：guguchen0226@gmail.com
-- GitHub：[@Cheguu](https://github.com/Cheguu)
+- GitHub：[@Qiangugu0226](https://github.com/Qiangugu0226)
