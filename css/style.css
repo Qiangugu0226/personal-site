@@ -1,0 +1,620 @@
+/* ============================================================
+   个人主页样式
+   ------------------------------------------------------------
+   组织方式：
+   1. 变量（颜色、间距）—— 改这里就能整体换配色
+   2. 全局重置
+   3. 通用容器 / 区块
+   4. 各区块样式
+   5. 深色模式
+   6. 响应式
+   ============================================================ */
+
+
+/* ============================================================
+   1. 变量
+   ============================================================ */
+
+:root {
+  --color-primary:      #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-accent:       #7c3aed;
+
+  --color-bg:        #ffffff;
+  --color-bg-alt:    #f8fafc;
+  --color-surface:   #ffffff;
+  --color-border:    #e2e8f0;
+
+  --color-text:      #0f172a;
+  --color-text-soft: #475569;
+  --color-text-mute: #94a3b8;
+
+  --radius:    14px;
+  --radius-sm: 8px;
+  --shadow:    0 1px 3px rgba(15, 23, 42, .06), 0 4px 12px rgba(15, 23, 42, .04);
+  --shadow-lg: 0 8px 28px rgba(15, 23, 42, .10);
+
+  --max-width: 1080px;
+  --transition: .25s cubic-bezier(.4, 0, .2, 1);
+}
+
+
+/* ============================================================
+   2. 全局重置
+   ============================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* 锚点跳转时留出吸顶导航的高度，避免标题被遮住 */
+  scroll-padding-top: 80px;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei",
+               "PingFang SC", sans-serif;
+  line-height: 1.75;
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition: background var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: var(--color-primary); text-decoration: none; }
+
+
+/* ============================================================
+   3. 通用容器 / 区块
+   ============================================================ */
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section { padding: 88px 0; }
+.section-alt { background: var(--color-bg-alt); }
+
+.section-title {
+  font-size: 1.875rem;
+  letter-spacing: -.02em;
+  margin-bottom: 12px;
+}
+
+/* 标题下的小装饰线 */
+.section-title::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 4px;
+  margin-top: 14px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+}
+
+.section-subtitle {
+  max-width: 620px;
+  margin: 20px 0 40px;
+  color: var(--color-text-soft);
+}
+
+
+/* ============================================================
+   4.1 页头
+   ============================================================ */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  height: 68px;
+}
+
+.logo {
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--color-text);
+}
+
+.site-nav {
+  display: flex;
+  gap: 28px;
+  margin-left: auto;
+}
+
+.site-nav a {
+  position: relative;
+  font-size: .9375rem;
+  color: var(--color-text-soft);
+  transition: color var(--transition);
+}
+
+.site-nav a:hover { color: var(--color-primary); }
+
+/* 悬停时下方出现一条下划线 */
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--color-primary);
+  transition: width var(--transition);
+}
+
+.site-nav a:hover::after { width: 100%; }
+
+
+/* ============================================================
+   4.2 深色模式切换按钮
+   ============================================================ */
+
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  font-size: 1.125rem;
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform var(--transition), background var(--transition);
+}
+
+.theme-toggle:hover {
+  transform: rotate(20deg) scale(1.08);
+  background: var(--color-border);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+
+/* ============================================================
+   4.3 首屏
+   ============================================================ */
+
+.hero {
+  padding: 112px 0 96px;
+  background:
+    radial-gradient(900px 420px at 15% -10%, rgba(37, 99, 235, .10), transparent 60%),
+    radial-gradient(700px 380px at 90% 0%,  rgba(124, 58, 237, .10), transparent 60%);
+}
+
+.hero-greeting {
+  font-size: 1.0625rem;
+  color: var(--color-text-soft);
+}
+
+.hero-name {
+  font-size: clamp(2.75rem, 8vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+  margin: 4px 0 20px;
+  background: linear-gradient(120deg, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-tagline {
+  max-width: 560px;
+  font-size: 1.125rem;
+  color: var(--color-text-soft);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 36px 0 28px;
+}
+
+.hero-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: .9375rem;
+  color: var(--color-text-soft);
+}
+
+/* 呼吸绿点 */
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, .6);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  70%  { box-shadow: 0 0 0 9px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0   rgba(34, 197, 94, 0); }
+}
+
+
+/* ============================================================
+   4.4 按钮
+   ============================================================ */
+
+.btn {
+  display: inline-block;
+  padding: 12px 26px;
+  font-size: .9375rem;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition),
+              background var(--transition), border-color var(--transition);
+}
+
+.btn-primary {
+  color: #fff;
+  background: var(--color-primary);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, .28);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(37, 99, 235, .34);
+}
+
+.btn-ghost {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.btn-ghost:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+
+/* ============================================================
+   4.5 关于我
+   ============================================================ */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+  margin-top: 32px;
+}
+
+.about-text p + p { margin-top: 18px; }
+
+.about-text p {
+  color: var(--color-text-soft);
+  font-size: 1.0625rem;
+}
+
+.about-card {
+  padding: 28px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.about-card h3 {
+  font-size: 1rem;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.fact-list { list-style: none; }
+
+.fact-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 0;
+  font-size: .9375rem;
+}
+
+.fact-list li + li { border-top: 1px dashed var(--color-border); }
+
+.fact-list span   { color: var(--color-text-mute); }
+.fact-list strong { color: var(--color-text); font-weight: 600; }
+
+
+/* ============================================================
+   4.6 技能卡片
+   ============================================================ */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
+}
+
+.card {
+  padding: 26px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  margin-bottom: 14px;
+}
+
+.card h3 {
+  font-size: 1.0625rem;
+  margin-bottom: 8px;
+}
+
+.card p {
+  font-size: .9375rem;
+  color: var(--color-text-soft);
+  margin-bottom: 18px;
+}
+
+.skill-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+
+.skill-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+}
+
+
+/* ============================================================
+   4.7 学习路线时间线
+   ============================================================ */
+
+.timeline {
+  list-style: none;
+  position: relative;
+  margin-top: 32px;
+  padding-left: 34px;
+}
+
+/* 竖线 */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 34px;
+}
+
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-dot {
+  position: absolute;
+  left: -34px;
+  top: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 3px solid var(--color-border);
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.timeline-item.is-done .timeline-dot {
+  background: #22c55e;
+  border-color: #22c55e;
+}
+
+.timeline-item.is-active .timeline-dot {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .18);
+}
+
+.timeline-content h3 {
+  font-size: 1.0625rem;
+  margin-bottom: 5px;
+}
+
+.timeline-content p {
+  font-size: .9375rem;
+  color: var(--color-text-soft);
+}
+
+.timeline-badge {
+  display: inline-block;
+  margin-bottom: 9px;
+  padding: 2px 11px;
+  font-size: .75rem;
+  font-weight: 600;
+  border-radius: 100px;
+  background: var(--color-border);
+  color: var(--color-text-soft);
+}
+
+.timeline-item.is-done .timeline-badge {
+  background: rgba(34, 197, 94, .14);
+  color: #15803d;
+}
+
+.timeline-item.is-active .timeline-badge {
+  background: rgba(37, 99, 235, .13);
+  color: var(--color-primary);
+}
+
+
+/* ============================================================
+   4.8 联系
+   ============================================================ */
+
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.contact-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 26px;
+  font-size: .9375rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform var(--transition), border-color var(--transition),
+              box-shadow var(--transition);
+}
+
+.contact-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.contact-icon { font-size: 1.125rem; }
+
+
+/* ============================================================
+   4.9 页脚
+   ============================================================ */
+
+.site-footer {
+  padding: 44px 0;
+  text-align: center;
+  font-size: .9375rem;
+  color: var(--color-text-mute);
+  border-top: 1px solid var(--color-border);
+}
+
+.footer-hint {
+  margin-top: 6px;
+  font-size: .875rem;
+}
+
+
+/* ============================================================
+   5. 深色模式
+   ============================================================ */
+
+[data-theme="dark"] {
+  --color-bg:        #0b1120;
+  --color-bg-alt:    #111827;
+  --color-surface:   #1e293b;
+  --color-border:    #334155;
+
+  --color-text:      #f1f5f9;
+  --color-text-soft: #cbd5e1;
+  --color-text-mute: #64748b;
+
+  --shadow:    0 1px 3px rgba(0, 0, 0, .4), 0 4px 12px rgba(0, 0, 0, .3);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, .5);
+}
+
+[data-theme="dark"] .hero {
+  background:
+    radial-gradient(900px 420px at 15% -10%, rgba(37, 99, 235, .20), transparent 60%),
+    radial-gradient(700px 380px at 90% 0%,  rgba(124, 58, 237, .18), transparent 60%);
+}
+
+[data-theme="dark"] .timeline-item.is-done .timeline-badge {
+  background: rgba(34, 197, 94, .18);
+  color: #4ade80;
+}
+
+[data-theme="dark"] .btn-primary { color: #fff; }
+
+
+/* ============================================================
+   6. 响应式
+   ============================================================ */
+
+@media (max-width: 860px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 680px) {
+  .section { padding: 64px 0; }
+
+  .hero { padding: 76px 0 64px; }
+
+  .section-title { font-size: 1.5rem; }
+
+  /* 手机上隐藏导航，避免挤压；保留 logo 和主题按钮 */
+  .site-nav { display: none; }
+
+  .hero-actions .btn { flex: 1 1 auto; text-align: center; }
+
+  .contact-item { width: 100%; }
+}
+
+/* 尊重系统的「减少动态效果」设置 —— 无障碍细节，加分项 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
